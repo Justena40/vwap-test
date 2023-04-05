@@ -2,6 +2,8 @@ package com.hsoft.practice;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -131,17 +133,9 @@ public class VwapTriggerTest {
         );
 
         var value = vwapTrigger.productTransactions.get(productId);
-        assertAll(productId,
-                () -> assertEquals(quantity,
-                        value.get(0).getQuantity(),
-                        "The quantity is incorrect"
-                ),
-                () -> assertEquals(price,
-                        value.get(0).getPrice(),
-                        "The price is incorrect"
-                )
-        );
-
+        assert value.peek() != null;
+        assertEquals(quantity, Objects.requireNonNull(value.peek()).getQuantity());
+        assertEquals(price, Objects.requireNonNull(value.peek()).getPrice());
     }
 
     @Test
@@ -164,24 +158,11 @@ public class VwapTriggerTest {
         );
 
         var value = vwapTrigger.productTransactions.get(productId);
-        assertAll(productId,
-                () -> assertEquals(quantity1,
-                        value.get(0).getQuantity(),
-                        "The first quantity added is incorrect"
-                ),
-                () -> assertEquals(price1,
-                        value.get(0).getPrice(),
-                        "The first price added is incorrect"
-                ),
-                () -> assertEquals(quantity2,
-                        value.get(1).getQuantity(),
-                        "The second quantity added is incorrect"
-                ),
-                () -> assertEquals(price2,
-                        value.get(1).getPrice(),
-                        "The second price added is incorrect"
-                )
-        );
+        assert value.peek() != null;
+        assertEquals(quantity1, Objects.requireNonNull(value.peek()).getQuantity(), "The first quantity added is incorrect");
+        assertEquals(price1, Objects.requireNonNull(value.peek()).getPrice(), "The first price added is incorrect");
+        assertEquals(quantity2, value.stream().toList().get(1).getQuantity(), "The second quantity added is incorrect");
+        assertEquals(price2, value.stream().toList().get(1).getPrice(), "The second price added is incorrect");
     }
 
     @Test
@@ -205,16 +186,8 @@ public class VwapTriggerTest {
         );
 
         var valueFirstProduct = vwapTrigger.productTransactions.get(productId1);
-        assertAll(productId1,
-                () -> assertEquals(quantity1,
-                        valueFirstProduct.get(0).getQuantity(),
-                        "The quantity of first product added is incorrect"
-                ),
-                () -> assertEquals(price1,
-                        valueFirstProduct.get(0).getPrice(),
-                        "The price of first product added is incorrect"
-                )
-        );
+        assertEquals(quantity1, valueFirstProduct.stream().toList().get(0).getQuantity(), "The quantity of first product added is incorrect");
+        assertEquals(price1, valueFirstProduct.stream().toList().get(0).getPrice(), "The price of first product added is incorrect");
 
         assertTrue(
                 vwapTrigger.productTransactions.containsKey(productId2),
@@ -222,16 +195,9 @@ public class VwapTriggerTest {
         );
 
         var valueSecondProduct = vwapTrigger.productTransactions.get(productId2);
-        assertAll(productId2,
-                () -> assertEquals(quantity2,
-                        valueSecondProduct.get(0).getQuantity(),
-                        "The quantity of second product added is incorrect"
-                ),
-                () -> assertEquals(price2,
-                        valueSecondProduct.get(0).getPrice(),
-                        "The price of second product added is incorrect"
-                )
-        );
+
+        assertEquals(quantity2, valueSecondProduct.stream().toList().get(0).getQuantity(), "The quantity of second product added is incorrect");
+        assertEquals(price2, valueSecondProduct.stream().toList().get(0).getPrice(), "The price of second product added is incorrect");
     }
 
     @Test
@@ -258,24 +224,10 @@ public class VwapTriggerTest {
         );
 
         var valueFirstProduct = vwapTrigger.productTransactions.get(productId1);
-        assertAll(productId1,
-                () -> assertEquals(quantity1,
-                        valueFirstProduct.get(0).getQuantity(),
-                        "The first quantity of first product added is incorrect"
-                ),
-                () -> assertEquals(price1,
-                        valueFirstProduct.get(0).getPrice(),
-                        "The first price of first product added is incorrect"
-                ),
-                () -> assertEquals(quantity1Bis,
-                        valueFirstProduct.get(1).getQuantity(),
-                        "The second quantity of first product added is incorrect"
-                ),
-                () -> assertEquals(price1Bis,
-                        valueFirstProduct.get(1).getPrice(),
-                        "The second price of first product added is incorrect"
-                )
-        );
+        assertEquals(quantity1, valueFirstProduct.stream().toList().get(0).getQuantity(), "The first quantity of first product added is incorrect");
+        assertEquals(price1, valueFirstProduct.stream().toList().get(0).getPrice(), "The first price of first product added is incorrect");
+        assertEquals(quantity1Bis, valueFirstProduct.stream().toList().get(1).getQuantity(), "The second quantity of first product added is incorrect");
+        assertEquals(price1Bis, valueFirstProduct.stream().toList().get(1).getPrice(), "The second price of first product added is incorrect");
 
         assertTrue(
                 vwapTrigger.productTransactions.containsKey(productId2),
@@ -283,15 +235,53 @@ public class VwapTriggerTest {
         );
 
         var valueSecondProduct = vwapTrigger.productTransactions.get(productId2);
-        assertAll(productId2,
-                () -> assertEquals(quantity2,
-                        valueSecondProduct.get(0).getQuantity(),
-                        "The quantity of second product added is incorrect"
-                ),
-                () -> assertEquals(price2,
-                        valueSecondProduct.get(0).getPrice(),
-                        "The price of second product added is incorrect"
-                )
+        assertEquals(quantity2, valueSecondProduct.stream().toList().get(0).getQuantity(), "The quantity of second product added is incorrect");
+        assertEquals(price2, valueSecondProduct.stream().toList().get(0).getPrice(), "The price of second product added is incorrect");
+    }
+
+
+    @Test
+    void ShouldAddMoreThanFiveTransactionsOnProduct() {
+        //Given
+        var productId = "P1";
+        var quantity1 = 1000;
+        var price1 = 10.0;
+        var quantity2 = 2000;
+        var price2 = 9.0;
+        var quantity3 = 3000;
+        var price3 = 8.5;
+        var quantity4 = 4000;
+        var price4 = 2.5;
+        var quantity5 = 5000;
+        var price5 = 6.8;
+        var quantity6 = 6000;
+        var price6 = 22.0;
+
+        //When
+        vwapTrigger.transactionOccurred(productId, quantity1, price1);
+        vwapTrigger.transactionOccurred(productId, quantity2, price2);
+        vwapTrigger.transactionOccurred(productId, quantity3, price3);
+        vwapTrigger.transactionOccurred(productId, quantity4, price4);
+        vwapTrigger.transactionOccurred(productId, quantity5, price5);
+        vwapTrigger.transactionOccurred(productId, quantity6, price6);
+
+        //Then
+        assertTrue(
+                vwapTrigger.productTransactions.containsKey(productId),
+                () -> String.format("The map doesn't contain the key: %s", productId)
         );
+
+        var value = vwapTrigger.productTransactions.get(productId);
+        assert value.peek() != null;
+        assertEquals(quantity2, value.stream().toList().get(0).getQuantity(), "The first quantity added is incorrect");
+        assertEquals(price2, value.stream().toList().get(0).getPrice(), "The first price added is incorrect");
+        assertEquals(quantity3, value.stream().toList().get(1).getQuantity(), "The second quantity added is incorrect");
+        assertEquals(price3, value.stream().toList().get(1).getPrice(), "The second price added is incorrect");
+        assertEquals(quantity4, value.stream().toList().get(2).getQuantity(), "The third quantity added is incorrect");
+        assertEquals(price4, value.stream().toList().get(2).getPrice(), "The third price added is incorrect");
+        assertEquals(quantity5, value.stream().toList().get(3).getQuantity(), "The fourth quantity added is incorrect");
+        assertEquals(price5, value.stream().toList().get(3).getPrice(), "The fourth price added is incorrect");
+        assertEquals(quantity6, value.stream().toList().get(4).getQuantity(), "The fifth quantity added is incorrect");
+        assertEquals(price6, value.stream().toList().get(4).getPrice(), "The fifth price added is incorrect");
     }
 }

@@ -5,9 +5,10 @@ import com.hsoft.api.MarketDataListener;
 import com.hsoft.api.PricingDataListener;
 import com.hsoft.api.VwapTriggerListener;
 
-import java.lang.reflect.Array;
-import java.util.*;
-import java.util.concurrent.TransferQueue;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 
 /**
  * Entry point for the candidate to resolve the exercise
@@ -16,7 +17,7 @@ public class VwapTrigger implements PricingDataListener, MarketDataListener {
 
     private final VwapTriggerListener vwapTriggerListener;
     public final Map<String, Double> fairValueProduct = new HashMap<>();
-    public final Map<String, List<Transaction>> productTransactions = new HashMap<>();
+    public final Map<String, Queue<Transaction>> productTransactions = new HashMap<>();
 
     /**
      * This constructor is mainly available to ease unit test by not having to provide a VwapTriggerListener
@@ -38,9 +39,11 @@ public class VwapTrigger implements PricingDataListener, MarketDataListener {
         // And, if matching the requirement, notify the event via 'this.vwapTriggerListener.vwapTriggered(xxx);'
 
         if (!productTransactions.containsKey(productId)) {
-            productTransactions.put(productId, new ArrayList<>());
+            productTransactions.put(productId, new LinkedList<>());
+        } else if (productTransactions.get(productId).size() == 5) {
+            Transaction elementRemoved = productTransactions.get(productId).remove();
         }
-        productTransactions.get(productId).add(new Transaction(quantity, price));
+        productTransactions.get(productId).offer(new Transaction(quantity, price));
 
         //productTransactions.put(productId, new Transaction(quantity, price));
     }
