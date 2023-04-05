@@ -42,7 +42,9 @@ public class VwapTrigger implements PricingDataListener, MarketDataListener {
         var vwapResult = computeVwap(productTransactions.get(productId));
         VWAP.put(productId, vwapResult);
 
-        System.out.println("vwap result = " + vwapResult);
+        if (VWAP.get(productId) > fairValueProduct.get(productId)) {
+            vwapTriggerListener.vwapTriggered(productId, VWAP.get(productId), fairValueProduct.get(productId));
+        }
     }
 
     private void saveTransaction(String productId, long quantity, double price) {
@@ -71,5 +73,8 @@ public class VwapTrigger implements PricingDataListener, MarketDataListener {
         // You can then perform your check
         // And, if matching the requirement, notify the event via 'this.vwapTriggerListener.vwapTriggered(xxx);'
         fairValueProduct.put(productId, fairValue);
+        if (VWAP.get(productId) > fairValueProduct.get(productId)) {
+            vwapTriggerListener.vwapTriggered(productId, VWAP.get(productId), fairValueProduct.get(productId));
+        }
     }
 }
