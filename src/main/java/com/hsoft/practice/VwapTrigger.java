@@ -17,6 +17,7 @@ public class VwapTrigger implements PricingDataListener, MarketDataListener {
 
     private final VwapTriggerListener vwapTriggerListener;
     public final Map<String, Double> fairValueProduct = new HashMap<>();
+    public final Map<String, Double> VWAP = new HashMap<>();
     public final Map<String, Queue<Transaction>> productTransactions = new HashMap<>();
 
     /**
@@ -37,21 +38,31 @@ public class VwapTrigger implements PricingDataListener, MarketDataListener {
         // This method will be called when a new transaction is received
         // You can then perform your check
         // And, if matching the requirement, notify the event via 'this.vwapTriggerListener.vwapTriggered(xxx);'
+        saveTransaction(productId, quantity, price);
+        var vwapResult = computeVwap(productTransactions.get(productId));
+        VWAP.put(productId, vwapResult);
 
+        System.out.println("vwap result = " + vwapResult);
+    }
+
+    private void saveTransaction(String productId, long quantity, double price) {
         if (!productTransactions.containsKey(productId)) {
             productTransactions.put(productId, new LinkedList<>());
         } else if (productTransactions.get(productId).size() == 5) {
             Transaction elementRemoved = productTransactions.get(productId).remove();
         }
         productTransactions.get(productId).offer(new Transaction(quantity, price));
-
-        //productTransactions.put(productId, new Transaction(quantity, price));
     }
 
-    private Double computeVwap(Long quantity, Double price) {
+    private Double computeVwap(Queue<Transaction> transactions) {
+        var dividend = 0.0;
+        var divisor = 0L;
 
-        //    Double res = (quantity * price) / quantity;
-        return 0.0;
+        for(Transaction transaction : transactions) {
+            dividend += transaction.getPrice() * transaction.getQuantity();
+            divisor += transaction.getQuantity();
+        }
+        return dividend / divisor;
     }
 
     @Override

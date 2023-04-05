@@ -239,7 +239,6 @@ public class VwapTriggerTest {
         assertEquals(price2, valueSecondProduct.stream().toList().get(0).getPrice(), "The price of second product added is incorrect");
     }
 
-
     @Test
     void ShouldAddMoreThanFiveTransactionsOnProduct() {
         //Given
@@ -283,5 +282,60 @@ public class VwapTriggerTest {
         assertEquals(price5, value.stream().toList().get(3).getPrice(), "The fourth price added is incorrect");
         assertEquals(quantity6, value.stream().toList().get(4).getQuantity(), "The fifth quantity added is incorrect");
         assertEquals(price6, value.stream().toList().get(4).getPrice(), "The fifth price added is incorrect");
+    }
+
+    @Test
+    void ShouldComputeVWAPForOneTransaction() {
+        //Given
+        var productId = "P1";
+        var quantity1 = 1000;
+        var price1 = 10.0;
+
+        //When
+        vwapTrigger.transactionOccurred(productId, quantity1, price1);
+
+        //Then
+        assertEquals(price1, vwapTrigger.VWAP.get(productId), "The VWAP computation is incorrect");
+    }
+
+    @Test
+    void ShouldComputeVWAPForTwoTransaction() {
+        //Given
+        var productId = "P1";
+        var quantity1 = 1000;
+        var price1 = 10.0;
+        var quantity2 = 2000;
+        var price2 = 11.0;
+
+        //When
+        vwapTrigger.transactionOccurred(productId, quantity1, price1);
+        vwapTrigger.transactionOccurred(productId, quantity2, price2);
+
+        //Then
+        var vwapResult = (quantity1 * price1 + quantity2 * price2) / (quantity1 + quantity2);
+        assertEquals(vwapResult, vwapTrigger.VWAP.get(productId), "The VWAP computation is incorrect");
+    }
+
+    @Test
+    void ShouldComputeVWAPForTwoProducts() {
+        //Given
+        var productId1 = "P1";
+        var quantity1 = 1000;
+        var price1 = 10.0;
+        var quantity1Bis = 2000;
+        var price1Bis = 11.0;
+        var productId2 = "P2";
+        var quantity2 = 500;
+        var price2 = 12.0;
+
+        //When
+        vwapTrigger.transactionOccurred(productId1, quantity1, price1);
+        vwapTrigger.transactionOccurred(productId2, quantity2, price2);
+        vwapTrigger.transactionOccurred(productId1, quantity1Bis, price1Bis);
+
+        //Then
+        var vwapResultProductId1 = (quantity1 * price1 + quantity1Bis * price1Bis) / (quantity1 + quantity1Bis);
+        assertEquals(vwapResultProductId1, vwapTrigger.VWAP.get(productId1), "The VWAP computation for the first product is incorrect");
+        assertEquals(price2, vwapTrigger.VWAP.get(productId2), "The VWAP computation for the second product is incorrect");
     }
 }
