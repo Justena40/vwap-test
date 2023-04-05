@@ -42,7 +42,8 @@ public class VwapTrigger implements PricingDataListener, MarketDataListener {
         var vwapResult = computeVwap(productTransactions.get(productId));
         VWAP.put(productId, vwapResult);
 
-        if (VWAP.get(productId) > fairValueProduct.get(productId)) {
+        if (VWAP.containsKey(productId) && fairValueProduct.containsKey(productId) &&
+                VWAP.get(productId) > fairValueProduct.get(productId)) {
             vwapTriggerListener.vwapTriggered(productId, VWAP.get(productId), fairValueProduct.get(productId));
         }
     }
@@ -60,7 +61,7 @@ public class VwapTrigger implements PricingDataListener, MarketDataListener {
         var dividend = 0.0;
         var divisor = 0L;
 
-        for(Transaction transaction : transactions) {
+        for (Transaction transaction : transactions) {
             dividend += transaction.getPrice() * transaction.getQuantity();
             divisor += transaction.getQuantity();
         }
@@ -73,7 +74,8 @@ public class VwapTrigger implements PricingDataListener, MarketDataListener {
         // You can then perform your check
         // And, if matching the requirement, notify the event via 'this.vwapTriggerListener.vwapTriggered(xxx);'
         fairValueProduct.put(productId, fairValue);
-        if (VWAP.get(productId) > fairValueProduct.get(productId)) {
+        if (VWAP.containsKey(productId) && fairValueProduct.containsKey(productId) &&
+                VWAP.get(productId) > fairValueProduct.get(productId)) {
             vwapTriggerListener.vwapTriggered(productId, VWAP.get(productId), fairValueProduct.get(productId));
         }
     }
