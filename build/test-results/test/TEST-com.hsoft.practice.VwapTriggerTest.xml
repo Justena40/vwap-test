@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.hsoft.practice.VwapTriggerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-04-05T04:05:40" hostname="DESKTOP-L99RMKS" time="0.051">
+  <properties/>
+  <testcase name="ShouldAddTwoTransactionsOnTwoDifferentProducts()" classname="com.hsoft.practice.VwapTriggerTest" time="0.051"/>
+  <system-out><![CDATA[name P1 / quantity 1000 / price 10.0
+
+name P2 / quantity 500 / price 12.0
+
+name P1 / quantity 2000 / price 11.0
+
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
