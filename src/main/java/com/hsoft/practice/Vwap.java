@@ -23,13 +23,12 @@ public class Vwap {
         return productTransactions;
     }
 
-    public synchronized void mainVwap(String productId, long quantity, Double price) {
-        saveTransaction(productId, quantity, price);
-        var vwapResult = computeVwap(productTransactions.get(productId));
+    public synchronized void SaveAndComputeVwap(String productId) {
+        var vwapResult = computeVwap(getProductTransactions().get(productId));
         VWAP.put(productId, vwapResult);
     }
 
-    private synchronized void saveTransaction(String productId, long quantity, double price) {
+    public synchronized void saveTransaction(String productId, long quantity, double price) {
         if (!productTransactions.containsKey(productId)) {
             productTransactions.put(productId, new LinkedList<>());
         } else if (productTransactions.get(productId).size() == 5) {

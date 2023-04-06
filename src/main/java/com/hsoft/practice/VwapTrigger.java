@@ -37,7 +37,8 @@ public class VwapTrigger implements PricingDataListener, MarketDataListener {
         // This method will be called when a new transaction is received
         // You can then perform your check
         // And, if matching the requirement, notify the event via 'this.vwapTriggerListener.vwapTriggered(xxx);'
-        vwap.mainVwap(productId, quantity, price);
+        vwap.saveTransaction(productId, quantity, price);
+        vwap.SaveAndComputeVwap(productId);
         compareVwapAndFairValue(productId);
     }
 
