@@ -128,11 +128,11 @@ public class VwapTriggerTest {
 
         //Then
         assertTrue(
-                vwapTrigger.productTransactions.containsKey(productId),
+                VwapTrigger.vwap.getProductTransactions().containsKey(productId),
                 () -> String.format("The map doesn't contain the key: %s", productId)
         );
 
-        var value = vwapTrigger.productTransactions.get(productId);
+        var value = VwapTrigger.vwap.getProductTransactions().get(productId);
         assert value.peek() != null;
         assertEquals(quantity, Objects.requireNonNull(value.peek()).getQuantity());
         assertEquals(price, Objects.requireNonNull(value.peek()).getPrice());
@@ -153,11 +153,11 @@ public class VwapTriggerTest {
 
         //Then
         assertTrue(
-                vwapTrigger.productTransactions.containsKey(productId),
+                VwapTrigger.vwap.getProductTransactions().containsKey(productId),
                 () -> String.format("The map doesn't contain the key: %s", productId)
         );
 
-        var value = vwapTrigger.productTransactions.get(productId);
+        var value = VwapTrigger.vwap.getProductTransactions().get(productId);
         assert value.peek() != null;
         assertEquals(quantity1, Objects.requireNonNull(value.peek()).getQuantity(), "The first quantity added is incorrect");
         assertEquals(price1, Objects.requireNonNull(value.peek()).getPrice(), "The first price added is incorrect");
@@ -181,20 +181,20 @@ public class VwapTriggerTest {
 
         //Then
         assertTrue(
-                vwapTrigger.productTransactions.containsKey(productId1),
+                VwapTrigger.vwap.getProductTransactions().containsKey(productId1),
                 () -> String.format("The map doesn't contain the key: %s", productId1)
         );
 
-        var valueFirstProduct = vwapTrigger.productTransactions.get(productId1);
+        var valueFirstProduct = VwapTrigger.vwap.getProductTransactions().get(productId1);
         assertEquals(quantity1, valueFirstProduct.stream().toList().get(0).getQuantity(), "The quantity of first product added is incorrect");
         assertEquals(price1, valueFirstProduct.stream().toList().get(0).getPrice(), "The price of first product added is incorrect");
 
         assertTrue(
-                vwapTrigger.productTransactions.containsKey(productId2),
+                VwapTrigger.vwap.getProductTransactions().containsKey(productId2),
                 () -> String.format("The map doesn't contain the key: %s", productId2)
         );
 
-        var valueSecondProduct = vwapTrigger.productTransactions.get(productId2);
+        var valueSecondProduct = VwapTrigger.vwap.getProductTransactions().get(productId2);
 
         assertEquals(quantity2, valueSecondProduct.stream().toList().get(0).getQuantity(), "The quantity of second product added is incorrect");
         assertEquals(price2, valueSecondProduct.stream().toList().get(0).getPrice(), "The price of second product added is incorrect");
@@ -219,22 +219,22 @@ public class VwapTriggerTest {
 
         //Then
         assertTrue(
-                vwapTrigger.productTransactions.containsKey(productId1),
+                VwapTrigger.vwap.getProductTransactions().containsKey(productId1),
                 () -> String.format("The map doesn't contain the key: %s", productId1)
         );
 
-        var valueFirstProduct = vwapTrigger.productTransactions.get(productId1);
+        var valueFirstProduct = VwapTrigger.vwap.getProductTransactions().get(productId1);
         assertEquals(quantity1, valueFirstProduct.stream().toList().get(0).getQuantity(), "The first quantity of first product added is incorrect");
         assertEquals(price1, valueFirstProduct.stream().toList().get(0).getPrice(), "The first price of first product added is incorrect");
         assertEquals(quantity1Bis, valueFirstProduct.stream().toList().get(1).getQuantity(), "The second quantity of first product added is incorrect");
         assertEquals(price1Bis, valueFirstProduct.stream().toList().get(1).getPrice(), "The second price of first product added is incorrect");
 
         assertTrue(
-                vwapTrigger.productTransactions.containsKey(productId2),
+                VwapTrigger.vwap.getProductTransactions().containsKey(productId2),
                 () -> String.format("The map doesn't contain the key: %s", productId2)
         );
 
-        var valueSecondProduct = vwapTrigger.productTransactions.get(productId2);
+        var valueSecondProduct = VwapTrigger.vwap.getProductTransactions().get(productId2);
         assertEquals(quantity2, valueSecondProduct.stream().toList().get(0).getQuantity(), "The quantity of second product added is incorrect");
         assertEquals(price2, valueSecondProduct.stream().toList().get(0).getPrice(), "The price of second product added is incorrect");
     }
@@ -266,11 +266,11 @@ public class VwapTriggerTest {
 
         //Then
         assertTrue(
-                vwapTrigger.productTransactions.containsKey(productId),
+                VwapTrigger.vwap.getProductTransactions().containsKey(productId),
                 () -> String.format("The map doesn't contain the key: %s", productId)
         );
 
-        var value = vwapTrigger.productTransactions.get(productId);
+        var value = VwapTrigger.vwap.getProductTransactions().get(productId);
         assert value.peek() != null;
         assertEquals(quantity2, value.stream().toList().get(0).getQuantity(), "The first quantity added is incorrect");
         assertEquals(price2, value.stream().toList().get(0).getPrice(), "The first price added is incorrect");
@@ -291,11 +291,12 @@ public class VwapTriggerTest {
         var quantity1 = 1000;
         var price1 = 10.0;
 
+
         //When
         vwapTrigger.transactionOccurred(productId, quantity1, price1);
 
         //Then
-        assertEquals(price1, vwapTrigger.VWAP.get(productId), "The VWAP computation is incorrect");
+        assertEquals(price1, VwapTrigger.vwap.getVWAP().get(productId), "The VWAP computation is incorrect");
     }
 
     @Test
@@ -313,7 +314,7 @@ public class VwapTriggerTest {
 
         //Then
         var vwapResult = (quantity1 * price1 + quantity2 * price2) / (quantity1 + quantity2);
-        assertEquals(vwapResult, vwapTrigger.VWAP.get(productId), "The VWAP computation is incorrect");
+        assertEquals(vwapResult, VwapTrigger.vwap.getVWAP().get(productId), "The VWAP computation is incorrect");
     }
 
     @Test
@@ -335,7 +336,7 @@ public class VwapTriggerTest {
 
         //Then
         var vwapResultProductId1 = (quantity1 * price1 + quantity1Bis * price1Bis) / (quantity1 + quantity1Bis);
-        assertEquals(vwapResultProductId1, vwapTrigger.VWAP.get(productId1), "The VWAP computation for the first product is incorrect");
-        assertEquals(price2, vwapTrigger.VWAP.get(productId2), "The VWAP computation for the second product is incorrect");
+        assertEquals(vwapResultProductId1, VwapTrigger.vwap.getVWAP().get(productId1), "The VWAP computation for the first product is incorrect");
+        assertEquals(price2, VwapTrigger.vwap.getVWAP().get(productId2), "The VWAP computation for the second product is incorrect");
     }
 }

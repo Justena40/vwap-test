@@ -1,8 +1,13 @@
-P11:18:08.863 [Test worker] INFO  com.hsoft.internal.B - Java: 17.0.6+9-LTS-190
-R11:18:08.870 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
-R11:18:08.915 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
-R11:18:09.022 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
-R11:18:09.192 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
-R11:18:09.266 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
-R11:18:09.322 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
-Q11:18:09.491 [Test worker] INFO  com.hsoft.internal.B - All data were published
+P17:00:35.720 [Test worker] INFO  com.hsoft.internal.B - Java: 17.0.6+9-LTS-190
+R17:00:35.729 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
+Q17:00:36.056 [Test worker] INFO  com.hsoft.internal.B - All data were published
+R17:00:36.098 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
+Q17:00:36.248 [Test worker] INFO  com.hsoft.internal.B - All data were published
+R17:00:36.253 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
+Q17:00:36.561 [Test worker] INFO  com.hsoft.internal.B - All data were published
+R17:00:36.566 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
+Q17:00:36.733 [Test worker] INFO  com.hsoft.internal.B - All data were published
+R17:00:36.738 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
+Q17:00:36.812 [Test worker] INFO  com.hsoft.internal.B - All data were published
+R17:00:36.817 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
+Q17:00:36.892 [Test worker] INFO  com.hsoft.internal.B - All data were published
