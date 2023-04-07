@@ -5,20 +5,13 @@ import com.hsoft.api.MarketDataListener;
 import com.hsoft.api.PricingDataListener;
 import com.hsoft.api.VwapTriggerListener;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
-
 /**
  * Entry point for the candidate to resolve the exercise
  */
 public class VwapTrigger implements PricingDataListener, MarketDataListener {
 
     private final VwapTriggerListener vwapTriggerListener;
-    public final Map<String, Double> fairValueProduct = new HashMap<>();
-    public final Map<String, Double> VWAP = new HashMap<>();
-    public final Map<String, Queue<Transaction>> productTransactions = new HashMap<>();
+    static Products products;
 
     /**
      * This constructor is mainly available to ease unit test by not having to provide a VwapTriggerListener
@@ -27,10 +20,12 @@ public class VwapTrigger implements PricingDataListener, MarketDataListener {
         this.vwapTriggerListener = (productId, vwap, fairValue) -> {
             // ignore
         };
+        products = new Products();
     }
 
     public VwapTrigger(VwapTriggerListener vwapTriggerListener) {
         this.vwapTriggerListener = vwapTriggerListener;
+        products = new Products();
     }
 
     @Override
@@ -38,45 +33,25 @@ public class VwapTrigger implements PricingDataListener, MarketDataListener {
         // This method will be called when a new transaction is received
         // You can then perform your check
         // And, if matching the requirement, notify the event via 'this.vwapTriggerListener.vwapTriggered(xxx);'
-        saveTransaction(productId, quantity, price);
-        var vwapResult = computeVwap(productTransactions.get(productId));
-        VWAP.put(productId, vwapResult);
-
-        if (VWAP.containsKey(productId) && fairValueProduct.containsKey(productId) &&
-                VWAP.get(productId) > fairValueProduct.get(productId)) {
-            vwapTriggerListener.vwapTriggered(productId, VWAP.get(productId), fairValueProduct.get(productId));
-        }
-    }
-
-    private void saveTransaction(String productId, long quantity, double price) {
-        if (!productTransactions.containsKey(productId)) {
-            productTransactions.put(productId, new LinkedList<>());
-        } else if (productTransactions.get(productId).size() == 5) {
-            Transaction elementRemoved = productTransactions.get(productId).remove();
-        }
-        productTransactions.get(productId).offer(new Transaction(quantity, price));
-    }
-
-    private Double computeVwap(Queue<Transaction> transactions) {
-        var dividend = 0.0;
-        var divisor = 0L;
-
-        for (Transaction transaction : transactions) {
-            dividend += transaction.getPrice() * transaction.getQuantity();
-            divisor += transaction.getQuantity();
-        }
-        return dividend / divisor;
+        products.saveTransaction(productId, quantity, price);
+        products.saveAndComputeVwap(productId);
+        compareVwapAndFairValue(productId);
     }
 
     @Override
-    public void fairValueChanged(String productId, double fairValue) {
+    public synchronized void fairValueChanged(String productId, double fairValue) {
         // This method will be called when a new fair value is received
         // You can then perform your check
         // And, if matching the requirement, notify the event via 'this.vwapTriggerListener.vwapTriggered(xxx);'
-        fairValueProduct.put(productId, fairValue);
-        if (VWAP.containsKey(productId) && fairValueProduct.containsKey(productId) &&
-                VWAP.get(productId) > fairValueProduct.get(productId)) {
-            vwapTriggerListener.vwapTriggered(productId, VWAP.get(productId), fairValueProduct.get(productId));
+        products.setFairValueProduct(productId, fairValue);
+        compareVwapAndFairValue(productId);
+    }
+
+    private synchronized void compareVwapAndFairValue(String productId) {
+        if (products.getVwap().containsKey(productId) && products.getFairValueProduct().containsKey(productId) &&
+                products.getVwap().get(productId) > products.getFairValueProduct().get(productId)) {
+            vwapTriggerListener.vwapTriggered(productId, products.getVwap().get(productId),
+                    products.getFairValueProduct().get(productId));
         }
     }
 }

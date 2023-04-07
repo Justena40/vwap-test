@@ -1,8 +1,0 @@
-P11:18:08.863 [Test worker] INFO  com.hsoft.internal.B - Java: 17.0.6+9-LTS-190
-R11:18:08.870 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
-R11:18:08.915 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
-R11:18:09.022 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
-R11:18:09.192 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
-R11:18:09.266 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
-R11:18:09.322 [Test worker] INFO  com.hsoft.internal.B - Starting to publish data
-Q11:18:09.491 [Test worker] INFO  com.hsoft.internal.B - All data were published
