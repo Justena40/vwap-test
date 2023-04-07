@@ -5,27 +5,36 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-public class Vwap {
-
-    private final Map<String, Double> VWAP;
+public class Products {
+    private final Map<String, Double> vwap;
     private final Map<String, Queue<Transaction>> productTransactions;
+    private final Map<String, Double> fairValueProduct;
 
-    public Vwap() {
-        this.VWAP = new HashMap<>();
+    public Products() {
+        this.vwap = new HashMap<>();
         this.productTransactions = new HashMap<>();
+        this.fairValueProduct = new HashMap<>();
     }
 
-    public Map<String, Double> getVWAP() {
-        return VWAP;
+    public Map<String, Double> getVwap() {
+        return vwap;
     }
 
     public Map<String, Queue<Transaction>> getProductTransactions() {
         return productTransactions;
     }
 
-    public synchronized void SaveAndComputeVwap(String productId) {
+    public Map<String, Double> getFairValueProduct() {
+        return fairValueProduct;
+    }
+
+    public void setFairValueProduct(String productId, Double fairValue) {
+        fairValueProduct.put(productId, fairValue);
+    }
+
+    public synchronized void saveAndComputeVwap(String productId) {
         var vwapResult = computeVwap(getProductTransactions().get(productId));
-        VWAP.put(productId, vwapResult);
+        vwap.put(productId, vwapResult);
     }
 
     public synchronized void saveTransaction(String productId, long quantity, double price) {
@@ -48,5 +57,4 @@ public class Vwap {
         }
         return dividend / divisor;
     }
-
 }
